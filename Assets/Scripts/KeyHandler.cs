@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class KeyHandler : MonoBehaviour
 {
-    string _desiredKeys = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    string _desiredKeys = "abcdefghijklmnopqrstuvwxyz";
     [SerializeField]
     List<char> _desiredKeysList;
 
@@ -18,10 +18,11 @@ public class KeyHandler : MonoBehaviour
     {
         if(Input.anyKeyDown && Input.inputString.Length == 1)
         {
-            if(_desiredKeysList.Contains(Input.inputString[0]))
+            string input = Input.inputString.ToLower();
+            if(_desiredKeysList.Contains(input[0]))
             {
                 DataSet eventData = new DataSet();
-                eventData.AddData("key", Input.inputString[0]);
+                eventData.AddData("key", input[0]);
 
                 EventDispatcher.TriggerEvent(Utils.GameEvent.KeyPressed.ToString(), eventData);
             }

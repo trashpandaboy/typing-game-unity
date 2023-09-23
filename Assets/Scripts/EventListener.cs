@@ -22,6 +22,5 @@ public class EventListener : MonoBehaviour
     private void OnKeyPressedMethod(DataSet obj)
     {
         char key = obj.GetData<char>("key");
-        Debug.Log("Received event KeyPressed - Char: " + key);
     }
 }

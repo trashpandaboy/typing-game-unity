@@ -3,6 +3,7 @@ public class Utils
 {
     public enum GameEvent
     {
-        KeyPressed
+        KeyPressed,
+        ScorePoints
     }
 }

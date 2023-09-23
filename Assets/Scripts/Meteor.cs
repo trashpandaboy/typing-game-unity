@@ -1,7 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using com.trashpandaboy.core;
+using com.trashpandaboy.core.Utils;
 using UnityEngine;
+using static Utils;
 
 public class Meteor : MonoBehaviour
 {
@@ -20,8 +23,10 @@ public class Meteor : MonoBehaviour
     float _letterSpan = 0.3f;
     [SerializeField]
     float _xStart = 0f;
+    private int _errors = 0;
 
     public string Word { get { return _word; } }
+
 
     private void Awake()
     {
@@ -60,7 +65,6 @@ public class Meteor : MonoBehaviour
         foreach (char letter in _word)
         {
             Vector3 localPos = new Vector3(_xStart + (count * _letterSpan), 0, 0);
-            Debug.Log(localPos);
             LetterComponent tempLetter = Instantiate(_letterPrefab, _wordContainer.transform).GetComponent<LetterComponent>();
             tempLetter.gameObject.transform.localPosition = localPos;
             tempLetter.Setup(letter);
@@ -76,7 +80,14 @@ public class Meteor : MonoBehaviour
 
     internal bool IsCurrentLetterEqualsTo(char letter)
     {
+        if (_currentLetterIndex == _word.Length)
+            return false;
         return _word[_currentLetterIndex] == letter;
+    }
+
+    internal bool IsWordCompleted()
+    {
+        return _currentLetterIndex == _word.Length;
     }
 
     internal void StrokeLetter()
@@ -85,8 +96,26 @@ public class Meteor : MonoBehaviour
         _currentLetterIndex++;
     }
 
-    internal bool IsWordCompleted()
+    internal void WrongLetter()
     {
-        return _currentLetterIndex == _word.Length;
+        _errors++;
+    }
+
+
+    internal void DestroyMeteor()
+    {
+        StartCoroutine(RemoveMeteor());
+    }
+
+    IEnumerator RemoveMeteor()
+    {
+        yield return new WaitForSeconds(0.2f);
+        DataSet data = new DataSet();
+        int points = 2 * _word.Length;
+        int pointsWithMalus = Math.Clamp(points - _errors, 0, points);
+        Debug.Log($"{points} - {pointsWithMalus} - {_errors}");
+        data.AddData("points", pointsWithMalus);
+        EventDispatcher.TriggerEvent(GameEvent.ScorePoints.ToString(),data);
+        Destroy(gameObject);
     }
 }

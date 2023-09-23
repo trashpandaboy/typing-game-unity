@@ -25,6 +25,7 @@ public class MeteorSpawner : MonoBehaviour
 
     UnityAction<DataSet> _onKeyPressed;
 
+
     private void Start()
     {
         _meteorsInField = new List<GameObject>();
@@ -61,13 +62,17 @@ public class MeteorSpawner : MonoBehaviour
             {
                 _meteorSelected.StrokeLetter();
             }
+            else
+            {
+                _meteorSelected.WrongLetter();
+            }
         }
 
         if(_meteorSelected != null && _meteorSelected.gameObject != null && _meteorSelected.IsWordCompleted())
         {
             if(_meteorsInField.Contains(_meteorSelected.gameObject))
                 _meteorsInField.Remove(_meteorSelected.gameObject);
-            Destroy(_meteorSelected.gameObject);
+            _meteorSelected.DestroyMeteor();
         }
     }
 
@@ -80,6 +85,7 @@ public class MeteorSpawner : MonoBehaviour
 
             Meteor tmpMeteor = Instantiate(_meteorPrefab, RandomPointInBounds(_spawnAreaBoxCollider.bounds), Quaternion.identity, _spawnArea.transform).GetComponent<Meteor>();
             tmpMeteor.SetupWord(WordManager.Instance.GetRandomWord(WordManager.Instance.GetRandomLength()));
+            
             _meteorsInField.Add(tmpMeteor.gameObject);
         }
     }

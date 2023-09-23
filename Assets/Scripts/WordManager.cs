@@ -2,21 +2,26 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using com.trashpandaboy.core;
 using UnityEngine;
 
 public class WordManager : Manager<WordManager>
 {
     [SerializeField]
-    Dictionary<int, List<string>> commonWordsByLenght;
+    Dictionary<int, List<string>> _commonWordsByLenght;
 
     [SerializeField]
-    List<string> commonWordsList;
+    List<string> _commonWordsList;
+
+
+    List<string> _lastTwentyWordsGenerated;
 
     private void Start()
     {
-        commonWordsByLenght = new Dictionary<int, List<string>>();
-        commonWordsList = new List<string>();
+        _lastTwentyWordsGenerated = new List<string>();
+        _commonWordsByLenght = new Dictionary<int, List<string>>();
+        _commonWordsList = new List<string>();
          
         string listOfWord = Resources.Load("common").ToString();
 
@@ -26,14 +31,15 @@ public class WordManager : Manager<WordManager>
 
             while ((wordLine = sr.ReadLine()) != null)
             {
-                if(wordLine.Length > 0)
+                if(wordLine.Length > 1 && Regex.IsMatch(wordLine, @"[A-Za-z]"))
                 {
-                    commonWordsList.Add(wordLine);
+                    wordLine = wordLine.ToLower();
+                    _commonWordsList.Add(wordLine);
 
-                    if (!commonWordsByLenght.ContainsKey(wordLine.Length))
-                        commonWordsByLenght[wordLine.Length] = new List<string>();
+                    if (!_commonWordsByLenght.ContainsKey(wordLine.Length))
+                        _commonWordsByLenght[wordLine.Length] = new List<string>();
 
-                    commonWordsByLenght[wordLine.Length].Add(wordLine);
+                    _commonWordsByLenght[wordLine.Length].Add(wordLine);
                 }
             }
         }
@@ -44,11 +50,27 @@ public class WordManager : Manager<WordManager>
     public string GetRandomWord(int length)
     {
         string word = "null";
-        if(commonWordsByLenght.ContainsKey(length))
+        if(_commonWordsByLenght.ContainsKey(length))
         {
-            int index = UnityEngine.Random.Range(0,commonWordsByLenght[length].Count);
+            int tryCounter = 0;
+            int index = 0;
+            do
+            {
+                if (tryCounter == _commonWordsByLenght[length].Count)
+                    length = GetRandomLength();
 
-            word = commonWordsByLenght[length][index];
+                tryCounter++;
+                index = UnityEngine.Random.Range(0, _commonWordsByLenght[length].Count);
+
+            }
+            while (_lastTwentyWordsGenerated.Contains(_commonWordsByLenght[length][index]));
+
+            word = _commonWordsByLenght[length][index];
+            _lastTwentyWordsGenerated.Add(word);
+
+            if (_lastTwentyWordsGenerated.Count > 100)
+                _lastTwentyWordsGenerated.RemoveAt(0);
+
         }
 
         return word;
@@ -56,7 +78,7 @@ public class WordManager : Manager<WordManager>
 
     private int[] GetAvailablesLength()
     {
-        return commonWordsByLenght.Keys.ToArray();
+        return _commonWordsByLenght.Keys.ToArray();
     }
 
     public int GetRandomLength()
