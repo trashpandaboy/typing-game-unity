@@ -1,11 +1,11 @@
 {
   "dependencies": {
     "com.trashpandaboy.core": {
-      "version": "https://github.com/trashpandaboy/TPCore.git#0.0.5",
+      "version": "https://github.com/trashpandaboy/TPCore.git#0.0.7",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "341233098b2377a0e07ce94ce583d868c251ae98"
+      "hash": "0e93077b0867eaf8a5d67f92230156e5ef9bca42"
     },
     "com.unity.2d.animation": {
       "version": "7.0.8",

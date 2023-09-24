@@ -44,4 +44,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2bc17f4c552e44532abc36a6b435d00d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  commonWordsList: []
+  _commonWordsList: []

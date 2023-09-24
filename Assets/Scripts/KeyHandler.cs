@@ -1,25 +1,17 @@
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using com.trashpandaboy.core;
 using com.trashpandaboy.core.Utils;
 using UnityEngine;
 
 public class KeyHandler : MonoBehaviour
 {
-    string _desiredKeys = "abcdefghijklmnopqrstuvwxyz";
-    [SerializeField]
-    List<char> _desiredKeysList;
-
-    private void Awake()
-    {
-        _desiredKeysList = new List<char>(_desiredKeys.ToCharArray());
-    }
-
     private void Update()
     {
-        if(Input.anyKeyDown && Input.inputString.Length == 1)
+        string input = Input.inputString.ToLower();
+        if (Input.anyKeyDown && input.Length == 1)
         {
-            string input = Input.inputString.ToLower();
-            if(_desiredKeysList.Contains(input[0]))
+            if(Regex.IsMatch(input, @"[A-Za-z]"))
             {
                 DataSet eventData = new DataSet();
                 eventData.AddData("key", input[0]);

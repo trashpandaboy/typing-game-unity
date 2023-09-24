@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using com.trashpandaboy.core;
+using com.trashpandaboy.core.Pooling;
 using com.trashpandaboy.core.Utils;
 using UnityEngine;
 using UnityEngine.Events;
@@ -15,19 +16,23 @@ public class MeteorSpawner : MonoBehaviour
     GameObject _spawnArea;
     BoxCollider2D _spawnAreaBoxCollider;
 
+    ObjectPool _meteorPool;
+
 
     List<GameObject> _meteorsInField;
     Meteor _meteorSelected = null;
 
     DateTime? _lastSpawn;
     [SerializeField]
-    float _delay = 2f;
+    float _delay = 0.1f;
 
     UnityAction<DataSet> _onKeyPressed;
 
 
     private void Start()
     {
+        _meteorPool = PoolsManager.Instance.GetObjectPool(_meteorPrefab);
+        _meteorPool.name = "MeteorObjectPool";
         _meteorsInField = new List<GameObject>();
         _spawnAreaBoxCollider = _spawnArea?.GetComponent<BoxCollider2D>();
         _onKeyPressed = new UnityAction<DataSet>(OnKeyPressed);
@@ -49,7 +54,6 @@ public class MeteorSpawner : MonoBehaviour
                     {
                         _meteorSelected = meteor.gameObject.GetComponent<Meteor>();
                         _meteorSelected.SelectMeteor();
-                        Debug.Log($"Meteor selected: {_meteorSelected.Word}");
                         _meteorSelected.StrokeLetter();
                         break;
                     }
@@ -72,7 +76,9 @@ public class MeteorSpawner : MonoBehaviour
         {
             if(_meteorsInField.Contains(_meteorSelected.gameObject))
                 _meteorsInField.Remove(_meteorSelected.gameObject);
+
             _meteorSelected.DestroyMeteor();
+            _meteorSelected = null;
         }
     }
 
@@ -81,13 +87,19 @@ public class MeteorSpawner : MonoBehaviour
         if(!_lastSpawn.HasValue || _lastSpawn.Value.AddSeconds(_delay) < DateTime.Now)
         {
             _lastSpawn = DateTime.Now;
-
-
-            Meteor tmpMeteor = Instantiate(_meteorPrefab, RandomPointInBounds(_spawnAreaBoxCollider.bounds), Quaternion.identity, _spawnArea.transform).GetComponent<Meteor>();
-            tmpMeteor.SetupWord(WordManager.Instance.GetRandomWord(WordManager.Instance.GetRandomLength()));
-            
-            _meteorsInField.Add(tmpMeteor.gameObject);
+            SpawnMeteor();
         }
+    }
+
+    private void SpawnMeteor()
+    {
+        Meteor tmpMeteor = _meteorPool.ProvideGameobject().GetComponent<Meteor>();
+        var position = RandomPointInBounds(_spawnAreaBoxCollider.bounds);
+        tmpMeteor.gameObject.transform.parent = _spawnArea.transform;
+        tmpMeteor.gameObject.transform.position = position;
+        tmpMeteor.Setup(WordManager.Instance.GetRandomWord(WordManager.Instance.GetRandomLength()));
+        tmpMeteor.gameObject.SetActive(true);
+        _meteorsInField.Add(tmpMeteor.gameObject);
     }
 
     public static Vector3 RandomPointInBounds(Bounds bounds)
