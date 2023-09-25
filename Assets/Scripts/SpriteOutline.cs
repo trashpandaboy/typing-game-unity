@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 [ExecuteInEditMode]
@@ -19,11 +17,6 @@ public class SpriteOutline : MonoBehaviour
     void OnDisable()
     {
         UpdateOutline(false);
-    }
-
-    void Update()
-    {
-        UpdateOutline(true);
     }
 
     void UpdateOutline(bool outline)

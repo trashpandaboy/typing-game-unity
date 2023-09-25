@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -43,9 +42,7 @@ public class WordManager : Manager<WordManager>
                 }
             }
         }
-
     }
-
 
     public string GetRandomWord(int length)
     {
@@ -88,5 +85,4 @@ public class WordManager : Manager<WordManager>
 
         return availablesLength[index];
     }
-
 }

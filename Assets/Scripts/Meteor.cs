@@ -9,26 +9,53 @@ using static Utils;
 
 public class Meteor : MonoBehaviour
 {
+    /// <summary>
+    /// Word who is related to the meteor
+    /// </summary>
     [SerializeField]
     string _word;
+    /// <summary>
+    /// Sprite outline component who will add a red outline to the sprite
+    /// </summary>
     SpriteOutline _spriteOutline;
 
+    /// <summary>
+    /// Transform who will contains Letters
+    /// </summary>
     [SerializeField]
     GameObject _wordContainer;
+    /// <summary>
+    /// LetterComponent prefab
+    /// </summary>
     [SerializeField]
     GameObject _letterPrefab;
 
+    /// <summary>
+    /// List of all LetterComponent gameobjects
+    /// </summary>
     [SerializeField]
     List<LetterComponent> _letters;
+    /// <summary>
+    /// Current letter's index to type
+    /// </summary>
     int _currentLetterIndex = 0;
+    /// <summary>
+    /// Span to space letters
+    /// </summary>
     [SerializeField]
     float _letterSpan = 0.3f;
-    [SerializeField]
+    /// <summary>
+    /// X coord where LetterComponet spawns
+    /// </summary>
     float _xStart = 0f;
+    /// <summary>
+    /// Amount of errors while typing the word
+    /// </summary>
     private int _errors = 0;
 
-    public string Word { get { return _word; } }
-
+    /// <summary>
+    /// LetterComponent pool
+    /// </summary>
     ObjectPool _lettersPool;
 
 
@@ -63,7 +90,6 @@ public class Meteor : MonoBehaviour
             {
                 if (letterComp != null)
                     _lettersPool.ReleaseGameobject(letterComp.gameObject);
-                    //Destroy(letterComp.gameObject);
             }
             _letters.Clear();
         }
@@ -97,7 +123,6 @@ public class Meteor : MonoBehaviour
 
     private void SpawnLetter(char letter, Vector3 localPos)
     {
-        //LetterComponent tempLetter = Instantiate(_letterPrefab, _wordContainer.transform).GetComponent<LetterComponent>();
         LetterComponent tempLetter = _lettersPool.ProvideGameobject().GetComponent<LetterComponent>();
         tempLetter.gameObject.transform.parent = _wordContainer.transform;
         tempLetter.gameObject.transform.localPosition = localPos;
@@ -154,5 +179,6 @@ public class Meteor : MonoBehaviour
         Reset();
         if(meteorPool != null)
             meteorPool.ReleaseGameobject(gameObject);
+        yield break;
     }
 }

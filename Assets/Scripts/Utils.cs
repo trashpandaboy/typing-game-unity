@@ -1,5 +1,4 @@
-﻿using System;
-public class Utils
+﻿public class Utils
 {
     public enum GameEvent
     {

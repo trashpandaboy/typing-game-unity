@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using com.trashpandaboy.core;
 using com.trashpandaboy.core.Pooling;
@@ -18,7 +17,6 @@ public class MeteorSpawner : MonoBehaviour
 
     ObjectPool _meteorPool;
 
-
     List<GameObject> _meteorsInField;
     Meteor _meteorSelected = null;
 
@@ -27,7 +25,6 @@ public class MeteorSpawner : MonoBehaviour
     float _delay = 0.1f;
 
     UnityAction<DataSet> _onKeyPressed;
-
 
     private void Start()
     {
@@ -82,7 +79,7 @@ public class MeteorSpawner : MonoBehaviour
         }
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
         if(!_lastSpawn.HasValue || _lastSpawn.Value.AddSeconds(_delay) < DateTime.Now)
         {

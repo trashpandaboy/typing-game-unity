@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using com.trashpandaboy.core;
 using com.trashpandaboy.core.Utils;
 using UnityEngine;
