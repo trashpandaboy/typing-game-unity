@@ -4834,7 +4834,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 7547415322488441374, guid: c0c2c6d43143e455793876e497dc8eba, type: 3}
       propertyPath: _delay
-      value: 1
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 7547415322488441374, guid: c0c2c6d43143e455793876e497dc8eba, type: 3}
       propertyPath: _spawnArea

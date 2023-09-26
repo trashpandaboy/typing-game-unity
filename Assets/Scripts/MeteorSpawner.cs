@@ -94,7 +94,7 @@ public class MeteorSpawner : MonoBehaviour
         var position = RandomPointInBounds(_spawnAreaBoxCollider.bounds);
         tmpMeteor.gameObject.transform.parent = _spawnArea.transform;
         tmpMeteor.gameObject.transform.position = position;
-        tmpMeteor.Setup(WordManager.Instance.GetRandomWord(WordManager.Instance.GetRandomLength()));
+        tmpMeteor.Setup(WordManager.Instance.GetRandomWord());
         tmpMeteor.gameObject.SetActive(true);
         _meteorsInField.Add(tmpMeteor.gameObject);
     }
