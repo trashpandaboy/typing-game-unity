@@ -52,7 +52,7 @@ public class PlayerLaser : MonoBehaviour
         _initialized = true;
 
         DataSet sound = new DataSet();
-        sound.AddData("sfx", SfxSound.Shoot.ToString());
+        sound.AddData("sound", SfxSound.Shoot.ToString());
         EventDispatcher.TriggerEvent(GameEvent.PlaySound.ToString(), sound);
     }
 
