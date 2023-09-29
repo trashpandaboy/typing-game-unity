@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using com.trashpandaboy.core;
 using com.trashpandaboy.core.Pooling;
 using com.trashpandaboy.core.Utils;
@@ -12,23 +9,11 @@ public class PlayerShooter : MonoBehaviour
 {
     [SerializeField]
     GameObject _laserPrefab;
-
-    UnityAction<DataSet> _onFireEventTriggered;
-
     ObjectPool _laserPool;
 
-    private void Awake()
-    {
-        _laserPool = PoolsManager.Instance.GetObjectPool(_laserPrefab);
-        _laserPool.name = "PlayerLaserPool";
-        _onFireEventTriggered = new UnityAction<DataSet>(Shoot);
-        EventDispatcher.StartListening(GameEvent.PlayerShot.ToString(),_onFireEventTriggered);
-    }
+    #region Events and Actions
 
-    private void OnDestroy()
-    {
-        EventDispatcher.StopListening(GameEvent.PlayerShot.ToString(), _onFireEventTriggered);
-    }
+    UnityAction<DataSet> _onFireEventTriggered;
 
     private void Shoot(DataSet data)
     {
@@ -38,15 +23,24 @@ public class PlayerShooter : MonoBehaviour
         laser.Initialize(GetMeteorTransform());
     }
 
-    private Vector3 GetDirectionToTarget()
+    #endregion
+
+    #region Unity
+
+    private void Awake()
     {
-        return GetMeteorPosition() - transform.position;
+        _laserPool = PoolsManager.Instance.GetObjectPool(_laserPrefab);
+        _laserPool.name = "PlayerLaserPool";
+        _onFireEventTriggered = new UnityAction<DataSet>(Shoot);
+        EventDispatcher.StartListening(GameEvent.PlayerShot.ToString(), _onFireEventTriggered);
     }
 
-    private Vector3 GetMeteorPosition()
+    private void OnDestroy()
     {
-        return MeteorSpawner.Instance.CurrentTargetPosition;
+        EventDispatcher.StopListening(GameEvent.PlayerShot.ToString(), _onFireEventTriggered);
     }
+
+    #endregion
 
     private Transform GetMeteorTransform()
     {

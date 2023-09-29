@@ -3,14 +3,19 @@ using UnityEngine;
 [ExecuteInEditMode]
 public class SpriteOutline : MonoBehaviour
 {
-    public Color color = Color.red;
+    [SerializeField]
+    Color color = Color.red;
     [Range(0, 16)]
+    [SerializeField]
     public int outlineSize = 1;
-    private SpriteRenderer spriteRenderer;
+
+    private SpriteRenderer _spriteRenderer;
+
+    #region Unity
 
     void OnEnable()
     {
-        spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+        _spriteRenderer = GetComponentInChildren<SpriteRenderer>();
         UpdateOutline(true);
     }
 
@@ -19,13 +24,15 @@ public class SpriteOutline : MonoBehaviour
         UpdateOutline(false);
     }
 
+    #endregion
+
     void UpdateOutline(bool outline)
     {
         MaterialPropertyBlock mpb = new MaterialPropertyBlock();
-        spriteRenderer.GetPropertyBlock(mpb);
+        _spriteRenderer.GetPropertyBlock(mpb);
         mpb.SetFloat("_Outline", outline ? 1f : 0);
         mpb.SetColor("_OutlineColor", color);
         mpb.SetFloat("_OutlineSize", outlineSize);
-        spriteRenderer.SetPropertyBlock(mpb);
+        _spriteRenderer.SetPropertyBlock(mpb);
     }
 }

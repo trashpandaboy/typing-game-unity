@@ -13,12 +13,19 @@ public class MeteorSpawner : Manager<MeteorSpawner>
     GameObject _meteorPrefab;
     [SerializeField]
     GameObject _spawnArea;
+
     BoxCollider2D _spawnAreaBoxCollider;
 
     ObjectPool _meteorPool;
 
     List<GameObject> _meteorsInField;
+
     Meteor _meteorSelected = null;
+
+    [SerializeField]
+    float _spawnDelay = 0.1f;
+    DateTime? _lastSpawn;
+
 
     public Vector3 CurrentTargetPosition
     {
@@ -30,34 +37,22 @@ public class MeteorSpawner : Manager<MeteorSpawner>
         get { return _meteorSelected?.transform ?? null; }
     }
 
-    DateTime? _lastSpawn;
-    [SerializeField]
-    float _delay = 0.1f;
+
+    #region Events and Action
 
     UnityAction<DataSet> _onKeyPressed;
-
-    private void Start()
-    {
-        _meteorPool = PoolsManager.Instance.GetObjectPool(_meteorPrefab);
-        _meteorPool.name = "MeteorObjectPool";
-        _meteorsInField = new List<GameObject>();
-        _spawnAreaBoxCollider = _spawnArea?.GetComponent<BoxCollider2D>();
-        _onKeyPressed = new UnityAction<DataSet>(OnKeyPressed);
-
-        EventDispatcher.StartListening(GameEvent.KeyPressed.ToString(), _onKeyPressed);
-    }
 
     private void OnKeyPressed(DataSet value)
     {
         char letter = value.GetData<char>("key");
 
-        if(_meteorSelected == null)
+        if (_meteorSelected == null)
         {
-            foreach(var meteor in _meteorsInField)
+            foreach (var meteor in _meteorsInField)
             {
-                if(meteor != null)
+                if (meteor != null)
                 {
-                    if(meteor.GetComponent<Meteor>().IsCurrentLetterEqualsTo(letter))
+                    if (meteor.GetComponent<Meteor>().IsCurrentLetterEqualsTo(letter))
                     {
                         _meteorSelected = meteor.gameObject.GetComponent<Meteor>();
                         _meteorSelected.SelectMeteor();
@@ -70,7 +65,7 @@ public class MeteorSpawner : Manager<MeteorSpawner>
         }
         else
         {
-            if(_meteorSelected.IsCurrentLetterEqualsTo(letter))
+            if (_meteorSelected.IsCurrentLetterEqualsTo(letter))
             {
                 _meteorSelected.StrokeLetter();
                 EventDispatcher.TriggerEvent(GameEvent.PlayerShot.ToString());
@@ -81,9 +76,9 @@ public class MeteorSpawner : Manager<MeteorSpawner>
             }
         }
 
-        if(_meteorSelected != null && _meteorSelected.gameObject != null && _meteorSelected.IsWordCompleted())
+        if (_meteorSelected != null && _meteorSelected.gameObject != null && _meteorSelected.IsWordCompleted())
         {
-            if(_meteorsInField.Contains(_meteorSelected.gameObject))
+            if (_meteorsInField.Contains(_meteorSelected.gameObject))
                 _meteorsInField.Remove(_meteorSelected.gameObject);
 
             _meteorSelected.DestroyMeteor();
@@ -91,14 +86,31 @@ public class MeteorSpawner : Manager<MeteorSpawner>
         }
     }
 
+    #endregion
+
+    #region Unity
+
+    private void Start()
+    {
+        _meteorPool = PoolsManager.Instance.GetObjectPool(_meteorPrefab);
+        _meteorPool.name = "MeteorObjectPool";
+        _meteorsInField = new List<GameObject>();
+        _spawnAreaBoxCollider = _spawnArea?.GetComponent<BoxCollider2D>();
+        _onKeyPressed = new UnityAction<DataSet>(OnKeyPressed);
+
+        EventDispatcher.StartListening(GameEvent.KeyPressed.ToString(), _onKeyPressed);
+    }
+
     private void FixedUpdate()
     {
-        if(!_lastSpawn.HasValue || _lastSpawn.Value.AddSeconds(_delay) < DateTime.Now)
+        if (!_lastSpawn.HasValue || _lastSpawn.Value.AddSeconds(_spawnDelay) < DateTime.Now)
         {
             _lastSpawn = DateTime.Now;
             SpawnMeteor();
         }
     }
+
+    #endregion
 
     private void SpawnMeteor()
     {
@@ -111,7 +123,7 @@ public class MeteorSpawner : Manager<MeteorSpawner>
         _meteorsInField.Add(tmpMeteor.gameObject);
     }
 
-    public static Vector3 RandomPointInBounds(Bounds bounds)
+    private static Vector3 RandomPointInBounds(Bounds bounds)
     {
         return new Vector3(
             UnityEngine.Random.Range(bounds.min.x, bounds.max.x),

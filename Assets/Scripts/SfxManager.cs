@@ -23,6 +23,8 @@ public class SfxManager : MonoBehaviour
 
     AudioSource _source;
 
+    #region Unity
+
     private void Awake()
     {
         _source = GetComponent<AudioSource>();
@@ -32,6 +34,8 @@ public class SfxManager : MonoBehaviour
     {
         EventDispatcher.StartListening(GameEvent.PlaySound.ToString(), OnPlaySound);
     }
+
+    #endregion
 
     private void OnPlaySound(DataSet data)
     {

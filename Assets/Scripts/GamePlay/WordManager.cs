@@ -16,11 +16,13 @@ public class WordManager : Manager<WordManager>
     [SerializeField]
     int _generatedWords;
 
+    #region Unity
+
     private void Start()
     {
         _commonWordsByLength = new Dictionary<int, List<string>>();
         _commonWordsList = new List<string>();
-         
+
         string listOfWord = Resources.Load("common").ToString();
 
         using (StringReader sr = new StringReader(listOfWord))
@@ -29,7 +31,7 @@ public class WordManager : Manager<WordManager>
 
             while ((wordLine = sr.ReadLine()) != null)
             {
-                if(wordLine.Length > 1 && Regex.IsMatch(wordLine, @"[A-Za-z]"))
+                if (wordLine.Length > 1 && Regex.IsMatch(wordLine, @"[A-Za-z]"))
                 {
                     wordLine = wordLine.ToLower();
                     _commonWordsList.Add(wordLine);
@@ -37,6 +39,14 @@ public class WordManager : Manager<WordManager>
             }
         }
     }
+
+    #endregion
+
+    private int[] GetAvailablesLength()
+    {
+        return _commonWordsByLength.Keys.ToArray();
+    }
+
 
     public void PopulateDictionaryCommondWordByLength()
     {
@@ -71,11 +81,6 @@ public class WordManager : Manager<WordManager>
         }
 
         return word;
-    }
-
-    private int[] GetAvailablesLength()
-    {
-        return _commonWordsByLength.Keys.ToArray();
     }
 
     public int GetRandomLength()

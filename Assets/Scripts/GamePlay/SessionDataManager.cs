@@ -9,9 +9,6 @@ public class SessionDataManager : Manager<SessionDataManager>
 {
     [SerializeField]
     int _points = 0;
-
-    public int Points { get { return _points; } }
-
     [SerializeField]
     int _wpm = 0;
     [SerializeField]
@@ -19,11 +16,38 @@ public class SessionDataManager : Manager<SessionDataManager>
 
     DateTime? _startingDigitTime = null;
 
+
+    public int Points { get { return _points; } }
+
     public int WPM { get { return _wpm; } }
+
+    #region Events and Actions
 
     UnityAction<DataSet> _onScorePointsAction;
     UnityAction<DataSet> _onKeyPressedAction;
     UnityAction<DataSet> _onWordSpelledCorrectlyAction;
+
+    private void OnScorePointsActionMethod(DataSet data)
+    {
+        int points = data.GetData<int>("points");
+        _points += points;
+    }
+
+    private void OnKeyPressedActionMethod(DataSet data)
+    {
+        EventDispatcher.StopListening(GameEvent.KeyPressed.ToString(), _onKeyPressedAction);
+        _startingDigitTime = DateTime.Now;
+    }
+
+    private void OnWordSpelledCorrecltyActionMethod(DataSet data)
+    {
+        int length = data.GetData<int>("length");
+        _amountCharacterTyped += length;
+    }
+
+    #endregion
+
+    #region Unity
 
     protected override void Awake()
     {
@@ -46,21 +70,5 @@ public class SessionDataManager : Manager<SessionDataManager>
         }
     }
 
-    private void OnScorePointsActionMethod(DataSet data)
-    {
-        int points = data.GetData<int>("points");
-        _points += points;
-    }
-
-    private void OnKeyPressedActionMethod(DataSet data)
-    {
-        EventDispatcher.StopListening(GameEvent.KeyPressed.ToString(), _onKeyPressedAction);
-        _startingDigitTime = DateTime.Now;
-    }
-
-    private void OnWordSpelledCorrecltyActionMethod(DataSet data)
-    {
-        int length = data.GetData<int>("length");
-        _amountCharacterTyped += length;
-    }
+    #endregion
 }
