@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using static Utils;
 
-public class MeteorSpawner : MonoBehaviour
+public class MeteorSpawner : Manager<MeteorSpawner>
 {
     [SerializeField]
     GameObject _meteorPrefab;
@@ -19,6 +19,16 @@ public class MeteorSpawner : MonoBehaviour
 
     List<GameObject> _meteorsInField;
     Meteor _meteorSelected = null;
+
+    public Vector3 CurrentTargetPosition
+    {
+        get { return _meteorSelected?.transform.position ?? Vector3.zero; }
+    }
+
+    public Transform CurrentTargetTransform
+    {
+        get { return _meteorSelected?.transform ?? null; }
+    }
 
     DateTime? _lastSpawn;
     [SerializeField]
@@ -52,6 +62,7 @@ public class MeteorSpawner : MonoBehaviour
                         _meteorSelected = meteor.gameObject.GetComponent<Meteor>();
                         _meteorSelected.SelectMeteor();
                         _meteorSelected.StrokeLetter();
+                        EventDispatcher.TriggerEvent(GameEvent.PlayerShot.ToString());
                         break;
                     }
                 }
@@ -62,6 +73,7 @@ public class MeteorSpawner : MonoBehaviour
             if(_meteorSelected.IsCurrentLetterEqualsTo(letter))
             {
                 _meteorSelected.StrokeLetter();
+                EventDispatcher.TriggerEvent(GameEvent.PlayerShot.ToString());
             }
             else
             {

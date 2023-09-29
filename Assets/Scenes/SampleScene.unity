@@ -4316,7 +4316,7 @@ GameObject:
   m_Component:
   - component: {fileID: 775346403}
   - component: {fileID: 775346404}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: playerShip2_red
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4399,7 +4399,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1074451836}
-  m_Layer: 0
+  - component: {fileID: 1074451837}
+  m_Layer: 7
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4422,6 +4423,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1074451837
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1074451835}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb52b3e78afa343018545ed5dac58fc7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _laserPrefab: {fileID: 6131334988069233699, guid: d256ee1cb25d94636bb3ad4806f70026, type: 3}
 --- !u!1 &1313408311
 GameObject:
   m_ObjectHideFlags: 0

@@ -58,6 +58,8 @@ public class Meteor : MonoBehaviour
     /// </summary>
     ObjectPool _lettersPool;
 
+    int _hitReceived = 0;
+
 
     private void Awake()
     {
@@ -82,6 +84,7 @@ public class Meteor : MonoBehaviour
 
     private void Reset()
     {
+        _hitReceived = 0;
         _currentLetterIndex = 0;
 
         if (_letters.Count > 0)
@@ -164,12 +167,12 @@ public class Meteor : MonoBehaviour
         DataSet eventData = new DataSet();
         eventData.AddData("length", _word.Length);
         EventDispatcher.TriggerEvent(GameEvent.WorldSpelledCorrectly.ToString(), eventData);
-        StartCoroutine(RemoveMeteor());
+        //StartCoroutine(RemoveMeteor());
     }
 
     IEnumerator RemoveMeteor()
     {
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(0.01f);
         DataSet data = new DataSet();
         int points = 2 * _word.Length;
         int pointsWithMalus = Math.Clamp(points - _errors, 0, points);
@@ -180,5 +183,14 @@ public class Meteor : MonoBehaviour
         if(meteorPool != null)
             meteorPool.ReleaseGameobject(gameObject);
         yield break;
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        _hitReceived++;
+        if(_hitReceived == _word.Length)
+        {
+            StartCoroutine(RemoveMeteor());
+        }
     }
 }
