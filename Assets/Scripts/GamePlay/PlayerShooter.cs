@@ -17,10 +17,13 @@ public class PlayerShooter : MonoBehaviour
 
     private void Shoot(DataSet data)
     {
-        var laserObj = _laserPool.ProvideGameobject();
-        PlayerLaser laser = laserObj.GetComponent<PlayerLaser>();
-        laser.transform.position = transform.position;
-        laser.Initialize(GetMeteorTransform());
+        if (!SessionDataManager.Instance.GameOver)
+        {
+            var laserObj = _laserPool.ProvideGameobject();
+            PlayerLaser laser = laserObj.GetComponent<PlayerLaser>();
+            laser.transform.position = transform.position;
+            laser.Initialize(GetMeteorTransform());
+        }
     }
 
     #endregion

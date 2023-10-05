@@ -17,7 +17,11 @@ public class Meteor : MonoBehaviour
     /// <summary>
     /// Sprite outline component who will add a red outline to the sprite
     /// </summary>
+    [SerializeField]
     SpriteOutline _spriteOutline;
+
+    [SerializeField]
+    Transform _meteorSprite;
 
     /// <summary>
     /// Transform who will contains Letters
@@ -60,30 +64,54 @@ public class Meteor : MonoBehaviour
 
     int _hitReceived = 0;
 
+    Vector3 _direction;
+
+    #region Unity
 
     private void Awake()
     {
         _letters = new List<LetterComponent>();
-        _spriteOutline = GetComponent<SpriteOutline>();
         _lettersPool = PoolsManager.Instance.GetObjectPool(_letterPrefab);
         _lettersPool.name = "LetterObjectPool";
     }
 
     private void Update()
     {
-        transform.position += Vector3.down * Time.deltaTime;
+        if (!SessionDataManager.Instance.GameOver)
+        {
+            var speed = Time.deltaTime;
+            var pointsMult = 1 + SessionDataManager.Instance.Points * 0.01f;
+            speed *= pointsMult;
+            transform.position += _direction * speed;
+        }
     }
 
-    internal void Setup(string word)
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        _hitReceived++;
+        if (_hitReceived == _word.Length)
+        {
+            StartCoroutine(RemoveMeteor());
+        }
+    }
+
+    #endregion
+
+    #region Setup
+
+    internal void Setup(string word, Vector3 direction)
     {
         Reset();
 
         _word = word;
+        _direction = direction.normalized;
+        SetupSize();
         SetupLetterComponents();
     }
 
-    private void Reset()
+    public void Reset()
     {
+        _direction = Vector3.zero;
         _hitReceived = 0;
         _currentLetterIndex = 0;
 
@@ -98,6 +126,16 @@ public class Meteor : MonoBehaviour
         }
         _spriteOutline.enabled = false;
     }
+
+    private void SetupSize()
+    {
+        var size = 1 + _word.Length / 5f;
+        _meteorSprite.localScale = Vector3.one * size;
+    }
+
+    #endregion
+
+    #region Letters
 
     private void SetupLetterComponents()
     {
@@ -133,6 +171,8 @@ public class Meteor : MonoBehaviour
         _letters.Add(tempLetter);
     }
 
+    #endregion
+
     public void SelectMeteor()
     {
         _spriteOutline.enabled = true;
@@ -152,8 +192,11 @@ public class Meteor : MonoBehaviour
 
     internal void StrokeLetter()
     {
-        _letters[_currentLetterIndex].SetLetterAsStroked();
-        _currentLetterIndex++;
+        if(_currentLetterIndex < _letters.Count)
+        {
+            _letters[_currentLetterIndex].SetLetterAsStroked();
+            _currentLetterIndex++;
+        }
     }
 
     internal void WrongLetter()
@@ -161,13 +204,11 @@ public class Meteor : MonoBehaviour
         _errors++;
     }
 
-
     internal void DestroyMeteor()
     {
         DataSet eventData = new DataSet();
         eventData.AddData("length", _word.Length);
         EventDispatcher.TriggerEvent(GameEvent.WorldSpelledCorrectly.ToString(), eventData);
-        //StartCoroutine(RemoveMeteor());
     }
 
     IEnumerator RemoveMeteor()
@@ -185,12 +226,4 @@ public class Meteor : MonoBehaviour
         yield break;
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        _hitReceived++;
-        if(_hitReceived == _word.Length)
-        {
-            StartCoroutine(RemoveMeteor());
-        }
-    }
 }

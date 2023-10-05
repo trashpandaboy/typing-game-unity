@@ -6,7 +6,9 @@
         ScorePoints,
         WorldSpelledCorrectly,
         PlayerShot,
-        PlaySound
+        PlaySound,
+        GameOver,
+        NewGame
     }
 
     public enum SfxSound

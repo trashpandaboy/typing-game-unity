@@ -7,15 +7,25 @@ public class KeyHandler : MonoBehaviour
 {
     private void Update()
     {
-        string input = Input.inputString.ToLower();
-        if (Input.anyKeyDown && input.Length == 1)
+        if(!SessionDataManager.Instance.GameOver)
         {
-            if(Regex.IsMatch(input, @"[A-Za-z]"))
+            string input = Input.inputString.ToLower();
+            if (Input.anyKeyDown && input.Length == 1)
             {
-                DataSet eventData = new DataSet();
-                eventData.AddData("key", input[0]);
+                if(Regex.IsMatch(input, @"[A-Za-z]"))
+                {
+                    DataSet eventData = new DataSet();
+                    eventData.AddData("key", input[0]);
 
-                EventDispatcher.TriggerEvent(Utils.GameEvent.KeyPressed.ToString(), eventData);
+                    EventDispatcher.TriggerEvent(Utils.GameEvent.KeyPressed.ToString(), eventData);
+                }
+            }
+        }
+        else
+        {
+            if(Input.GetKey(KeyCode.Return))
+            {
+                EventDispatcher.TriggerEvent(Utils.GameEvent.NewGame.ToString());
             }
         }
     }

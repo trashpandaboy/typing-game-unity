@@ -7,6 +7,9 @@ using static Utils;
 
 public class PlayerLaser : MonoBehaviour
 {
+    [SerializeField]
+    float _baseSpeed = 25f;
+
     SpriteRenderer _spriteRenderer;
     Vector3 _direction;
     bool _canMove = false;
@@ -18,6 +21,7 @@ public class PlayerLaser : MonoBehaviour
     private bool _initialized = false;
 
     Transform _target;
+
 
     private void Awake()
     {
@@ -70,7 +74,10 @@ public class PlayerLaser : MonoBehaviour
                 {
                     _direction = _target.position - transform.position;
                     transform.right = _direction;
-                    transform.position += _direction * Time.deltaTime * 14.5f;
+                    var speed = Time.deltaTime * _baseSpeed;
+                    var pointsMult = 1 + SessionDataManager.Instance.Points * 0.001f;
+                    speed *= pointsMult;
+                    transform.position += _direction.normalized * speed;
                 }
         }
     }

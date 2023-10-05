@@ -37,10 +37,12 @@ public class MeteorSpawner : Manager<MeteorSpawner>
         get { return _meteorSelected?.transform ?? null; }
     }
 
+    public Transform Player;
 
     #region Events and Action
 
     UnityAction<DataSet> _onKeyPressed;
+    UnityAction<DataSet> _onNewGame;
 
     private void OnKeyPressed(DataSet value)
     {
@@ -86,6 +88,12 @@ public class MeteorSpawner : Manager<MeteorSpawner>
         }
     }
 
+    private void OnNewGame(DataSet arg0)
+    {
+        _meteorSelected = null;
+        ReleaseAllMeteors();
+    }
+
     #endregion
 
     #region Unity
@@ -97,16 +105,22 @@ public class MeteorSpawner : Manager<MeteorSpawner>
         _meteorsInField = new List<GameObject>();
         _spawnAreaBoxCollider = _spawnArea?.GetComponent<BoxCollider2D>();
         _onKeyPressed = new UnityAction<DataSet>(OnKeyPressed);
+        _onNewGame = new UnityAction<DataSet>(OnNewGame);
 
         EventDispatcher.StartListening(GameEvent.KeyPressed.ToString(), _onKeyPressed);
+        EventDispatcher.StartListening(GameEvent.NewGame.ToString(), _onNewGame);
     }
+
 
     private void FixedUpdate()
     {
-        if (!_lastSpawn.HasValue || _lastSpawn.Value.AddSeconds(_spawnDelay) < DateTime.Now)
+        if(!SessionDataManager.Instance.GameOver)
         {
-            _lastSpawn = DateTime.Now;
-            SpawnMeteor();
+            if (!_lastSpawn.HasValue || _lastSpawn.Value.AddSeconds(_spawnDelay) < DateTime.Now)
+            {
+                _lastSpawn = DateTime.Now;
+                SpawnMeteor();
+            }
         }
     }
 
@@ -118,10 +132,21 @@ public class MeteorSpawner : Manager<MeteorSpawner>
         var position = RandomPointInBounds(_spawnAreaBoxCollider.bounds);
         tmpMeteor.gameObject.transform.parent = _spawnArea.transform;
         tmpMeteor.gameObject.transform.position = position;
-        tmpMeteor.Setup(WordManager.Instance.GetRandomWord());
+        tmpMeteor.Setup(WordManager.Instance.GetRandomWord(), Player.transform.position - position);
         tmpMeteor.gameObject.SetActive(true);
         _meteorsInField.Add(tmpMeteor.gameObject);
     }
+
+
+    private void ReleaseAllMeteors()
+    {
+        foreach(var meteor in _meteorsInField)
+        {
+            meteor.GetComponent<Meteor>().Reset();
+            _meteorPool.ReleaseGameobject(meteor);
+        }
+    }
+
 
     private static Vector3 RandomPointInBounds(Bounds bounds)
     {

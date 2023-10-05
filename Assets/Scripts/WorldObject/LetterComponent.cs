@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 
@@ -19,6 +20,6 @@ public class LetterComponent : MonoBehaviour
 
     public void SetLetterAsStroked()
     {
-        _letter.color = Color.red;
+        _letter.color = Color.green;
     }
 }

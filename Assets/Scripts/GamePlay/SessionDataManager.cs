@@ -21,11 +21,18 @@ public class SessionDataManager : Manager<SessionDataManager>
 
     public int WPM { get { return _wpm; } }
 
+    [SerializeField]
+    private bool _gameOver = false;
+
+    public bool GameOver { get { return _gameOver; } }
+
     #region Events and Actions
 
     UnityAction<DataSet> _onScorePointsAction;
     UnityAction<DataSet> _onKeyPressedAction;
     UnityAction<DataSet> _onWordSpelledCorrectlyAction;
+    UnityAction<DataSet> _onGameOverAction;
+    UnityAction<DataSet> _onNewGameAction;
 
     private void OnScorePointsActionMethod(DataSet data)
     {
@@ -45,6 +52,18 @@ public class SessionDataManager : Manager<SessionDataManager>
         _amountCharacterTyped += length;
     }
 
+    private void OnGameOverMethod(DataSet arg0)
+    {
+        _gameOver = true;
+    }
+
+    private void OnNewGameMethod(DataSet arg0)
+    {
+        _wpm = 0;
+        _points = 0;
+        _gameOver = false;
+    }
+
     #endregion
 
     #region Unity
@@ -55,9 +74,13 @@ public class SessionDataManager : Manager<SessionDataManager>
         _onScorePointsAction = new UnityAction<DataSet>(OnScorePointsActionMethod);
         _onKeyPressedAction = new UnityAction<DataSet>(OnKeyPressedActionMethod);
         _onWordSpelledCorrectlyAction = new UnityAction<DataSet>(OnWordSpelledCorrecltyActionMethod);
+        _onGameOverAction = new UnityAction<DataSet>(OnGameOverMethod);
+        _onNewGameAction = new UnityAction<DataSet>(OnNewGameMethod);
         EventDispatcher.StartListening(GameEvent.ScorePoints.ToString(), _onScorePointsAction);
         EventDispatcher.StartListening(GameEvent.KeyPressed.ToString(), _onKeyPressedAction);
         EventDispatcher.StartListening(GameEvent.WorldSpelledCorrectly.ToString(), _onWordSpelledCorrectlyAction);
+        EventDispatcher.StartListening(GameEvent.GameOver.ToString(), _onGameOverAction);
+        EventDispatcher.StartListening(GameEvent.NewGame.ToString(), _onNewGameAction);
     }
 
     private void FixedUpdate()
