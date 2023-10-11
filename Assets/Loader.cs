@@ -103,7 +103,8 @@ public class Loader : Manager<Loader>
     private void FixedUpdate()
     {
         _loaderText.text = $"{_percentage}%";
-        _fillerProgress.offsetMax = new Vector2(-(240 * (_percentage/100)), _fillerProgress.offsetMax.y);
+        var newX = ((240 * (100 - _percentage)) / 100) * -1;
+        _fillerProgress.offsetMax = new Vector2(newX, _fillerProgress.offsetMax.y);
         if (_percentage == 100)
             gameObject.SetActive(false);
     }
