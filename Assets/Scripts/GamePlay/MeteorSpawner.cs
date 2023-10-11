@@ -26,6 +26,8 @@ public class MeteorSpawner : Manager<MeteorSpawner>
     float _spawnDelay = 0.1f;
     DateTime? _lastSpawn;
 
+    bool _initialized = false;
+
 
     public Vector3 CurrentTargetPosition
     {
@@ -37,7 +39,9 @@ public class MeteorSpawner : Manager<MeteorSpawner>
         get { return _meteorSelected?.transform ?? null; }
     }
 
-    public Transform Player;
+    public bool Initialized => _initialized;
+
+    private Transform _playerTransform;
 
     #region Events and Action
 
@@ -98,6 +102,13 @@ public class MeteorSpawner : Manager<MeteorSpawner>
 
     #region Unity
 
+    protected override void Awake()
+    {
+        base.Awake();
+        _spawnArea = Loader.Instance.SpawnArea;
+        _playerTransform = Loader.Instance.Player.transform;
+    }
+
     private void Start()
     {
         _meteorPool = PoolsManager.Instance.GetObjectPool(_meteorPrefab);
@@ -109,6 +120,7 @@ public class MeteorSpawner : Manager<MeteorSpawner>
 
         EventDispatcher.StartListening(GameEvent.KeyPressed.ToString(), _onKeyPressed);
         EventDispatcher.StartListening(GameEvent.NewGame.ToString(), _onNewGame);
+        _initialized = true;
     }
 
 
@@ -132,7 +144,7 @@ public class MeteorSpawner : Manager<MeteorSpawner>
         var position = RandomPointInBounds(_spawnAreaBoxCollider.bounds);
         tmpMeteor.gameObject.transform.parent = _spawnArea.transform;
         tmpMeteor.gameObject.transform.position = position;
-        tmpMeteor.Setup(WordManager.Instance.GetRandomWord(), Player.transform.position - position);
+        tmpMeteor.Setup(WordManager.Instance.GetRandomWord(), _playerTransform.transform.position - position);
         tmpMeteor.gameObject.SetActive(true);
         _meteorsInField.Add(tmpMeteor.gameObject);
     }

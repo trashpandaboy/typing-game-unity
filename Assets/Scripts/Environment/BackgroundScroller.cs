@@ -11,6 +11,12 @@ public class BackgroundScroller : MonoBehaviour
 
     float size = 6f*5;
 
+    private void Awake()
+    {
+        bg1 = Loader.Instance.FirstBG;
+        bg2 = Loader.Instance.SecondBG;
+    }
+
     void Start()
     {
         bg1.transform.position = Vector3.zero;
@@ -19,7 +25,7 @@ public class BackgroundScroller : MonoBehaviour
 
     void Update()
     {
-        if (!SessionDataManager.Instance.GameOver)
+        if (SessionDataManager.Instance != null && !SessionDataManager.Instance.GameOver)
         {
             var pointsMult = 1 + SessionDataManager.Instance.Points * 0.01f;
             bg1.transform.Translate(Vector3.down * speed * pointsMult * Time.deltaTime);

@@ -23,15 +23,18 @@ public class Animation : MonoBehaviour
 
     private void EvaluateInfiniteShape()
     {
-        var currMeteorPosition = MeteorSpawner.Instance.CurrentTargetTransform?.position ?? Vector3.zero;
+        if(MeteorSpawner.Instance != null)
+        {
+            var currMeteorPosition = MeteorSpawner.Instance.CurrentTargetTransform?.position ?? Vector3.zero;
 
-        var oldX = transform.position.x;
-        var newX = 1f * Mathf.Sin(infiniteShapeSpeed * Time.time) + currMeteorPosition.x;
-        var y = 0.25f * Mathf.Sin(2 * infiniteShapeSpeed * Time.time);
-        transform.position = new Vector3(Mathf.Lerp(oldX, newX, Time.deltaTime * 10), -3 + y, transform.position.z);
+            var oldX = transform.position.x;
+            var newX = 1f * Mathf.Sin(infiniteShapeSpeed * Time.time) + currMeteorPosition.x;
+            var y = 0.25f * Mathf.Sin(2 * infiniteShapeSpeed * Time.time);
+            transform.position = new Vector3(Mathf.Lerp(oldX, newX, Time.deltaTime * 10), -3 + y, transform.position.z);
 
-        var size = 1 + 0.05f * Mathf.Sin(3.14f * 0.5f + 2 * infiniteShapeSpeed * Time.time);
-        transform.localScale = new Vector3(size, size, size);
+            var size = 1 + 0.05f * Mathf.Sin(3.14f * 0.5f + 2 * infiniteShapeSpeed * Time.time);
+            transform.localScale = new Vector3(size, size, size);
+        }
     }
 
     private void EvaluateFlip()

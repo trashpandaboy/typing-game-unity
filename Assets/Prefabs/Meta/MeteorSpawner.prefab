@@ -46,4 +46,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _meteorPrefab: {fileID: 1829333591003522866, guid: 7e46ace0e584a4592abb001d1e1adeb4, type: 3}
   _spawnArea: {fileID: 0}
-  _delay: 1
+  _spawnDelay: 1.5

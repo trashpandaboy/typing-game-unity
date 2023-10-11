@@ -7,6 +7,11 @@ using static Utils;
 public class Player : MonoBehaviour
 {
 
+    private void Awake()
+    {
+        Loader.Instance.SetPlayerObject(gameObject);
+    }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if(!SessionDataManager.Instance.GameOver)

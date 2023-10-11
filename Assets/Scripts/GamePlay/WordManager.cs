@@ -16,6 +16,10 @@ public class WordManager : Manager<WordManager>
     [SerializeField]
     int _generatedWords;
 
+    bool _initialized = false;
+
+    public bool Initialized => _initialized;
+
     #region Unity
 
     private void Start()
@@ -38,6 +42,10 @@ public class WordManager : Manager<WordManager>
                 }
             }
         }
+
+        PopulateDictionaryCommondWordByLength();
+
+        _initialized = true;
     }
 
     #endregion

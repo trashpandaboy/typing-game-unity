@@ -22,9 +22,12 @@ public class SessionDataManager : Manager<SessionDataManager>
     public int WPM { get { return _wpm; } }
 
     [SerializeField]
-    private bool _gameOver = false;
+    private bool _gameOver = true;
+    private bool _initialied = false;
 
     public bool GameOver { get { return _gameOver; } }
+
+    public bool Initialized => _initialied;
 
     #region Events and Actions
 
@@ -81,6 +84,8 @@ public class SessionDataManager : Manager<SessionDataManager>
         EventDispatcher.StartListening(GameEvent.WorldSpelledCorrectly.ToString(), _onWordSpelledCorrectlyAction);
         EventDispatcher.StartListening(GameEvent.GameOver.ToString(), _onGameOverAction);
         EventDispatcher.StartListening(GameEvent.NewGame.ToString(), _onNewGameAction);
+        _initialied = true;
+        _gameOver = true;
     }
 
     private void FixedUpdate()
